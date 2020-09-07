@@ -1,0 +1,55 @@
+c "Flooding.ex"; c "FloodingTest.ex"
+FloodingTest.test()
+
+:p2 started
+:p1 started
+:p3 started
+
+p2 received {:output, :bc_receive, :p2, "Hello from p2"}
+p1 received {:output, :bc_receive, :p1, "Hello from p1"}
+p3 received {:output, :bc_receive, :p3, "Hello from p3"}
+p2 received {:output, :bc_receive, :p3, "Hello from p3"}
+p1 received {:output, :bc_receive, :p2, "Hello from p2"}
+p3 received {:output, :bc_receive, :p2, "Hello from p2"}
+p2 received {:output, :bc_receive, :p1, "Hello from p1"}
+p1 received {:output, :bc_receive, :p3, "Hello from p3"}
+p3 received {:output, :bc_receive, :p1, "Hello from p1"}
+
+
+p1 received {:output, :bc_receive, :p1, "Hello from p1"}
+p3 received {:output, :bc_receive, :p1, "Hello from p1"}
+p2 received {:output, :bc_receive, :p1, "Hello from p1"}
+p1 received {:output, :bc_receive, :p3, "Hello from p3"}
+p3 received {:output, :bc_receive, :p3, "Hello from p3"}
+p1 received {:output, :bc_receive, :p2, "Hello from p2"}
+p2 received {:output, :bc_receive, :p3, "Hello from p3"}
+p3 received {:output, :bc_receive, :p2, "Hello from p2"}
+p2 received {:output, :bc_receive, :p2, "Hello from p2"}
+
+--------------------------------------------------------------
+
+c "Paxos.ex"; pid1 = Paxos.start(:p1, [:p1, :p2, :p3], self()); pid2 = Paxos.start(:p2, [:p1, :p2, :p3], self()); pid3 = Paxos.start(:p3, [:p1, :p2, :p3], self()); 
+
+
+c "Paxos.ex"; pid1 = Paxos.start(:p1, [:p1, :p2, :p3], self()); pid2 = Paxos.start(:p2, [:p1, :p2, :p3], self()); pid3 = Paxos.start(:p3, [:p1, :p2, :p3], self()); Paxos.propose(pid1, 10); Paxos.propose(pid2, 20); Paxos.propose(pid3, 30); Paxos.start_ballot(pid1)
+
+c "Paxos.ex"; pid1 = Paxos.start(:p1, [:p1, :p2, :p3, :p4], self()); pid2 = Paxos.start(:p2, [:p1, :p2, :p3, :p4], self()); pid3 = Paxos.start(:p3, [:p1, :p2, :p3, :p4], self()); pid4 = Paxos.start(:p4, [:p1, :p2, :p3, :p4], self()); Paxos.propose(pid1, 10, 7); Paxos.propose(pid2, 20, 6); Paxos.propose(pid3, 30, 8); Paxos.propose(pid4, 40, 6); Paxos.start_ballot(pid1)
+
+c "test.ex"; pid1 = Paxos2.start(:p1, [:p1, :p2, :p3], self()); pid2 = Paxos2.start(:p2, [:p1, :p2, :p3], self()); pid3 = Paxos2.start(:p3, [:p1, :p2, :p3], self()); Paxos2.propose(pid1, 10); Paxos2.propose(pid2, 20); Paxos2.propose(pid3, 30); Paxos2.start_ballot(pid1)
+
+
+Paxos.propose(pid1, 10); Paxos.propose(pid2, 20); Paxos.propose(pid3, 30) 
+
+for [p, v] <- [{pid1, :a}, {pid2, :b}, {pid3,:c}], do: Paxos.propose(p, v)
+
+Paxos.start_ballot(pid1)
+
+for _ <- 1..3 do   
+    receive do
+        {:decided, v} -> IO.puts(v)
+        after 1000 -> IO.puts("too long...)
+    end
+end
+
+
+

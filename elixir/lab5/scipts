@@ -1,0 +1,27 @@
+c "Flooding.ex"; c "FloodingTest.ex"
+FloodingTest.test()
+
+:p2 started
+:p1 started
+:p3 started
+
+p2 received {:output, :bc_receive, :p2, "Hello from p2"}
+p1 received {:output, :bc_receive, :p1, "Hello from p1"}
+p3 received {:output, :bc_receive, :p3, "Hello from p3"}
+p2 received {:output, :bc_receive, :p3, "Hello from p3"}
+p1 received {:output, :bc_receive, :p2, "Hello from p2"}
+p3 received {:output, :bc_receive, :p2, "Hello from p2"}
+p2 received {:output, :bc_receive, :p1, "Hello from p1"}
+p1 received {:output, :bc_receive, :p3, "Hello from p3"}
+p3 received {:output, :bc_receive, :p1, "Hello from p1"}
+
+
+p1 received {:output, :bc_receive, :p1, "Hello from p1"}
+p3 received {:output, :bc_receive, :p1, "Hello from p1"}
+p2 received {:output, :bc_receive, :p1, "Hello from p1"}
+p1 received {:output, :bc_receive, :p3, "Hello from p3"}
+p3 received {:output, :bc_receive, :p3, "Hello from p3"}
+p1 received {:output, :bc_receive, :p2, "Hello from p2"}
+p2 received {:output, :bc_receive, :p3, "Hello from p3"}
+p3 received {:output, :bc_receive, :p2, "Hello from p2"}
+p2 received {:output, :bc_receive, :p2, "Hello from p2"}
